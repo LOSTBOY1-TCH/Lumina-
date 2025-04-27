@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const { sendVerificationEmail, sendPasswordResetEmail } = require('./sendEmail');  // Import email functions
+const { sendVerificationEmail, sendPasswordResetEmail } = require('./utils/sendEmail');  // Import email functions
 
 const app = express();
 app.use(express.json());  // To parse JSON bodies
