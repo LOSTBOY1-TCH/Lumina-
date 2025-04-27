@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina NGL - Received Messages</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            padding: 40px;
+            animation: backgroundAnimation 5s infinite alternate;
+        }
+
+        .neon-text {
+            color: #a3a3ff;
+            text-shadow: 0 0 20px #a3a3ff, 0 0 30px #a3a3ff, 0 0 40px #a3a3ff, 0 0 50px #a3a3ff;
+            font-size: 2.5rem;
+            animation: textGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        .message-box {
+            background-color: #333;
+            margin: 10px;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            text-align: left;
+            box-shadow: 0 0 15px rgba(163, 163, 255, 0.8);
+            transition: 0.3s ease;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .message-box:hover {
+            box-shadow: 0 0 30px rgba(163, 163, 255, 1);
+            transform: scale(1.05);
+        }
+
+        button {
+            background-color: #a3a3ff;
+            color: #121212;
+            padding: 15px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #7171f0;
+        }
+
+        .screenshot-btn {
+            background-color: #ff66cc;
+            margin-top: 30px;
+            padding: 12px 20px;
+            font-size: 1.2rem;
+        }
+
+        .screenshot-btn:hover {
+            background-color: #ff3385;
+        }
+
+        @keyframes textGlow {
+            0% { 
+                text-shadow: 0 0 20px #a3a3ff, 0 0 30px #a3a3ff, 0 0 40px #a3a3ff, 0 0 50px #a3a3ff; 
+            }
+            100% { 
+                text-shadow: 0 0 30px #a3a3ff, 0 0 40px #a3a3ff, 0 0 50px #a3a3ff, 0 0 60px #a3a3ff; 
+            }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-color: #121212; }
+            50% { background-color: #2d2d2d; }
+            100% { background-color: #121212; }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="neon-text">Your Anonymous Messages</h1>
+    <h2 class="neon-text">All Messages Sent to You</h2>
+
+    <!-- Container for displaying all messages -->
+    <div id="messages"></div>
+
+    <!-- Screenshot Button -->
+    <button class="screenshot-btn" id="screenshotBtn">Take Screenshot</button>
+
+    <script>
+        // Fetching the logged-in username from the backend (session)
+        async function fetchUsername() {
+            const response = await fetch('/get-username');
+            const data = await response.json();
+            return data.username;
+        }
+
+        // Fetching messages based on the username
+        async function fetchMessages() {
+            const username = await fetchUsername();
+            const response = await fetch(`/messages/${username}`);
+            const messages = await response.json();
+
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = ''; // Clear any previous messages
+
+            // Loop through all messages and display them
+            messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-box');
+                messageDiv.innerHTML = `<p>${message.messageText}</p>`;
+                messagesDiv.appendChild(messageDiv);
+            });
+        }
+
+        // Initialize the page with the user's messages
+        fetchMessages();
+
+        // Screenshot functionality using html2canvas
+        document.getElementById('screenshotBtn').addEventListener('click', () => {
+            html2canvas(document.body).then(canvas => {
+                // Create a temporary link element to download the screenshot
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL();
+                link.download = 'lumina_ngl_screenshot.png';
+                link.click();
+            });
+        });
+    </script>
+
+    <!-- Include html2canvas library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+</body>
+</html>

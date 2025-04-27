@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina NGL - Send Anonymous Message</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            padding: 40px;
+            animation: backgroundAnimation 5s infinite alternate;
+        }
+
+        .neon-text {
+            color: #a3a3ff;
+            text-shadow: 0 0 20px #a3a3ff, 0 0 30px #a3a3ff, 0 0 40px #a3a3ff, 0 0 50px #a3a3ff;
+            font-size: 2.5rem;
+            animation: textGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        .message-form {
+            margin-top: 20px;
+        }
+
+        input, textarea {
+            background-color: #333;
+            border: none;
+            color: #fff;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
+            width: 80%;
+            font-size: 1.2rem;
+            outline: none;
+            box-shadow: 0 0 15px rgba(163, 163, 255, 0.8);
+            transition: 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            box-shadow: 0 0 25px rgba(163, 163, 255, 1);
+        }
+
+        button {
+            background-color: #a3a3ff;
+            color: #121212;
+            padding: 15px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #7171f0;
+        }
+
+        @keyframes textGlow {
+            0% { 
+                text-shadow: 0 0 20px #a3a3ff, 0 0 30px #a3a3ff, 0 0 40px #a3a3ff, 0 0 50px #a3a3ff; 
+            }
+            100% { 
+                text-shadow: 0 0 30px #a3a3ff, 0 0 40px #a3a3ff, 0 0 50px #a3a3ff, 0 0 60px #a3a3ff; 
+            }
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-color: #121212; }
+            50% { background-color: #2d2d2d; }
+            100% { background-color: #121212; }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="neon-text">Send an Anonymous Message to <span id="username"></span></h1>
+
+    <div class="message-form">
+        <form id="messageForm">
+            <textarea id="messageText" rows="4" placeholder="Enter your anonymous message here..." required></textarea>
+            <br>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+
+    <script>
+        // Get the username from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+        document.getElementById('username').innerText = username;
+
+        // Handle the form submission
+        document.getElementById('messageForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const messageText = document.getElementById('messageText').value;
+            
+            // Send the message using POST request to the backend
+            const response = await fetch(`/messages/${username}/send`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ messageText }),
+            });
+
+            if (response.ok) {
+                alert('Message sent anonymously!');
+                window.location.reload();  // Reload the page
+            } else {
+                alert('Error sending message.');
+            }
+        });
+    </script>
+</body>
+</html>
